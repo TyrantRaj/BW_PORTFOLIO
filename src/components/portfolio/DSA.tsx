@@ -77,45 +77,29 @@ query userProfile($username: String!) {
 }
 `;
 
-        const response = await fetch(
-          "https://corsproxy.io/?https://leetcode.com/graphql",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              query,
-              variables: {
-                username,
-              },
-            }),
-          }
-        );
+        const response = await fetch("/.netlify/functions/leetcode", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    username: "YuvarajX",
+  }),
+});
 
-        const result = await response.json();
+const result = await response.json();
 
-        if (
-          !result.data ||
-          !result.data.matchedUser
-        ) {
-          return;
-        }
+if (!result.data || !result.data.matchedUser) return;
 
-        const data =
-          result.data.matchedUser.submitStats
-            .acSubmissionNum;
+const data = result.data.matchedUser.submitStats.acSubmissionNum;
 
-        setStats({
-          total: data[0].count,
-          easy: data[1].count,
-          medium: data[2].count,
-          hard: data[3].count,
-          streak:
-            result.data.matchedUser
-              .userCalendar.streak,
-        });
+setStats({
+  total: data[0].count,
+  easy: data[1].count,
+  medium: data[2].count,
+  hard: data[3].count,
+  streak: result.data.matchedUser.userCalendar.streak,
+});
       } catch (error) {
         console.log(error);
       }
